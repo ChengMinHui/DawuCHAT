@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <title>Chat UI</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #4c8ee4; /* Green background */
+            font-family: Arial, sans-serif;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: space-between;
+        }
+        .header, .footer {
+            background-color: #5E4329; /* Coffee color */
+            padding: 10px;
+            text-align: left;
+        }
+        .header button {
+            display: flex;
+            align-items: center;
+            background-color: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .header button svg {
+            margin-right: 5px;
+        }
+        .chat-content-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin: 10px;
+            overflow: hidden; /* Prevents background from being affected by scrolling */
+        }
+        .chat-background {
+            width: 60%; /* Occupy 3/5 of the width */
+            height: 100%; /* Full height */
+            background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+            border-radius: 10px;
+            position: absolute; /* Fixed position within chat-content-wrapper */
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .fly-image {
+            position: absolute;
+            width: 15%;
+            height: 20%;
+            opacity: 0.5; /* Make flies slightly transparent */
+        }
+        .chat-content {
+            width: 60%; /* Occupy 3/5 of the width */
+            height: 100%; /* Full height */
+            overflow-y: auto; /* Enable scrolling */
+            padding: 10px;
+            display: flex;
+            flex-direction: column-reverse; /* Messages grow upwards */
+            position: relative;
+            z-index: 1; /* Ensure messages are above the background */
+        }
+        .message {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            max-width: 100%; /* Ensure messages do not overflow the chat-content */
+            word-wrap: break-word; /* Ensure long words are wrapped */
+            word-break: break-word; /* Ensure long words are broken */
+        }
+        .message img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .message.user {
+            justify-content: flex-end; /* User messages on the right */
+        }
+        .message.user .text {
+             background-color: #cfd8dc;
+             padding: 10px;
+             border-radius: 10px;
+             margin-left: 10px; /* Add left margin to create gap between image and text */
+             margin-right: 10px; /* Add right margin to create gap between image and text */
+             max-width: 75%; /* Ensure the user text does not overflow */
+             word-wrap: break-word; /* Ensure long words are wrapped */
+             word-break: break-word; /* Ensure long words are broken */
+}
+
+        .message.ai {
+            justify-content: flex-start; /* AI messages on the left */
+        }
+        .message.ai .text {
+            background-color: #4243a8;
+            padding: 10px;
+            border-radius: 10px;
+            margin-right: 10px;
+            margin-left: 10px; /* Add left margin to create gap between image and text */
+            max-width: 75%; /* Ensure the AI text does not overflow */
+            word-wrap: break-word; /* Ensure long words are wrapped */
+            word-break: break-word; /* Ensure long words are broken */
+            color: white; /* Change AI text color to white */
+        }
+        .message.user img {
+            margin-right: 10px; /* User image with a margin to the right */
+        }
+        .message.ai img {
+            margin-left: 10px; /* AI image with a margin to the left */
+        }
+        .footer-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .footer-top {
+            background-color: #5E4329; /* Coffee color */
+            padding: 10px;
+        }
+        .footer {
+            display: flex;
+            align-items: center;
+            background-color: #D3D3D3; /* Light grey background */
+            padding: 10px;
+        }
+        .footer img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        .footer input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        .footer button {
+            background-color: #8B4513; /* Coffee color */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <button onclick="goBack()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
+                    <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1"/>
+                </svg>
+                回到上一頁
+            </button>
+        </div>
+        <div class="chat-content-wrapper">
+            <div class="chat-background">
+                <img src="fly.png" alt="Fly" class="fly-image" style="top: 5%; left: 10%;">
+                <img src="fly.png" alt="Fly" class="fly-image" style="top: 42.5%; left: 45%;">
+                <img src="fly.png" alt="Fly" class="fly-image" style="top: 80%; left: 80%;">
+            </div>
+            <div class="chat-content" id="chatContent">
+                <!-- Chat messages will go here -->
+            </div>
+        </div>
+        <div class="footer-wrapper">
+            <div class="footer-top"></div>
+            <div class="footer">
+                <img src="pen.png" alt="Pen">
+                <input type="text" id="userInput" placeholder="在此輸入你的問題..." onkeydown="handleKeyDown(event)">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            alert('Back button clicked');
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const chatContent = document.getElementById('chatContent');
+
+            if (userInput.value.trim() !== "") {
+                // User's message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user';
+
+                const userImg = document.createElement('img');
+                userImg.src = 'user.png';
+                userImg.alt = 'User';
+
+                const userText = document.createElement('div');
+                userText.className = 'text';
+                userText.innerText = userInput.value;
+
+                userMessage.appendChild(userText);
+                userMessage.appendChild(userImg);
+                chatContent.prepend(userMessage);
+
+                // AI's response
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'message ai';
+
+                const aiImg = document.createElement('img');
+                aiImg.src = 'AI.png';
+                aiImg.alt = 'AI';
+
+                const aiText = document.createElement('div');
+                aiText.className = 'text';
+                aiText.innerText = '尚未串接API';
+
+                aiMessage.appendChild(aiImg);
+                aiMessage.appendChild(aiText);
+                chatContent.prepend(aiMessage);
+
+                // Clear the input field
+                userInput.value = "";
+                chatContent.scrollTop = 0;
+            }
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Initial message from AI
+        window.onload = function() {
+            const chatContent = document.getElementById('chatContent');
+
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'message ai';
+
+            const aiImg = document.createElement('img');
+            aiImg.src = 'AI.png';
+            aiImg.alt = 'AI';
+
+            const aiText = document.createElement('div');
+            aiText.className = 'text';
+            aiText.innerText = '你好，我是你的智能機器人，小悟，有甚麼能為你提供服務?此處可提供詢問達悟語言翻譯、達悟語解釋、以及它在日常中所實用的部分';
+
+            aiMessage.appendChild(aiImg);
+            aiMessage.appendChild(aiText);
+            chatContent.prepend(aiMessage);
+        };
+    </script>
+</body>
+</html>
